@@ -52,6 +52,10 @@ public class WikiSearch {
 			System.out.println(entry);
 		}
 	}
+
+	private Map<String, Integer> getMap() {
+		return map;
+	}
 	
 	/**
 	 * Computes the union of two search results.
@@ -60,8 +64,20 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch or(WikiSearch that) {
-        // FILL THIS IN!
-		return null;
+		Map<String, Integer> m = new HashMap<>();
+		Map<String, Integer> first = this.getMap();
+        for (String s: first.keySet()) {
+        	m.put(s, first.get(s));
+        }
+        Map<String, Integer> sec = that.getMap();
+        for (String s: sec.keySet()){
+        	if (m.containsKey(s)) {
+        		m.replace(s, sec.get(s) + first.get(s));
+        	} else {
+        		m.put(s, sec.get(s));
+        	}
+        }
+		return new WikiSearch(m);
 	}
 	
 	/**
@@ -71,8 +87,15 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch and(WikiSearch that) {
-        // FILL THIS IN!
-		return null;
+        Map<String, Integer> m = new HashMap<>();
+		Map<String, Integer> first = this.getMap();
+        Map<String, Integer> sec = that.getMap();
+        for (String s: first.keySet()) {
+        	if (sec.containsKey(s)) {
+        		m.put(s, first.get(s) + sec.get(s));
+        	}
+        }
+        return new WikiSearch(m);
 	}
 	
 	/**
@@ -82,8 +105,15 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch minus(WikiSearch that) {
-        // FILL THIS IN!
-		return null;
+        Map<String, Integer> m = new HashMap<>();
+		Map<String, Integer> first = this.getMap();
+        Map<String, Integer> sec = that.getMap();
+        for (String s: first.keySet()) {
+        	if (!sec.containsKey(s)) {
+        		m.put(s, first.get(s));
+        	}
+        }
+        return new WikiSearch(m);
 	}
 	
 	/**
@@ -104,8 +134,16 @@ public class WikiSearch {
 	 * @return List of entries with URL and relevance.
 	 */
 	public List<Entry<String, Integer>> sort() {
-        // FILL THIS IN!
-		return null;
+        List<Entry<String, Integer>> list = new LinkedList<>();
+        for (Map.Entry<String,Integer> s: this.getMap().entrySet()) {
+        	list.add(s);
+        }
+        Collections.sort(list, new Comparator<Entry<String, Integer>>() {
+        	public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
+        		return e1.getValue() - e2.getValue();
+        	}
+        });
+		return list;
 	}
 
 	/**
